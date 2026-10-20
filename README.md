@@ -1,9 +1,15 @@
 # Yakuza: Dead Souls cheats — USA (BLUS-30826)
 
 Cheats for the **USA** PS3 release of *Yakuza: Dead Souls*, aimed at real CFW
-hardware. No emulator results are claimed, and **nothing in here is verified
+hardware. No emulator results are claimed, and **no cheat has been verified
 yet** — codes only count as verified once they have been applied on a console
 and the effect seen in game. Every table below says what has actually been done.
+
+**Status:** the runtime route via Artemis is **closed** — it froze the
+console twice, both times at game launch, including once with no code attached.
+The route that does work on this hardware is **live memory pokes via PS3MAPI**
+(the NetCheat-style method), which needs no Artemis. See
+[What has been tried on hardware](#what-has-been-tried-on-hardware).
 
 - **Game:** Yakuza: Dead Souls (Ryu ga Gotoku OF THE END)
 - **Disc serial:** `BLUS-30826` (USA) — **confirmed**, read from the disc
@@ -94,10 +100,72 @@ addresses still cannot be checked from a PC. That needs the console.
 
 Full record and how to reproduce it: [`DISC.md`](DISC.md).
 
-## What is verified
+## What has been tried on hardware
 
-Nothing has been applied on the console yet. This table fills in as codes are
-confirmed. The procedure to fill it in is in
+The rule for this repo is that only console evidence counts. Console evidence
+includes failures — a freeze, a crash, or a code that does nothing is a result,
+and it is recorded here rather than quietly deleted.
+
+| # | what was done | result | conclusion |
+|---|---|---|---|
+| 1 | Artemis enabled in webMAN MOD (1.47.50b), game launched | **console froze** — screen stuck, audio stopped | see below |
+| 2 | Artemis confirmed `Enabled` via `/netstatus.ps3?artemis`; game launched again | **froze again**; `art.log` showed `Attached PID=…` | reproduced |
+| 3 | Console restarted to clear Artemis (could not be shut off without a restart) | Artemis off; PS3 clean | — |
+
+### What the Artemis failures do and do not show
+
+**Established:**
+
+- Artemis is **Enabled/Disabled** state is reported by
+  `/netstatus.ps3?artemis` on this setup, and enabling it made the game freeze.
+- The freeze happened on the **second** attempt too, which is a reproduction
+  rather than a one-off.
+- On the first freeze **no code was ever attached** and **no `Artemis PS3 / Start
+  to Attach` notification appeared**.
+
+**Not established:**
+
+- That any *individual cheat code* is broken. No code was ever applied. A code
+  that was never written to memory cannot freeze a game, so the freeze is
+  attributed to the **engine hook at launch**, not to the codes.
+- Any code address being wrong. The addresses remain **untested**, not failed.
+
+**Conclusion:** Artemis is not usable on this hardware. The runtime codes are
+therefore still unverified, but they have **not** been disproven.
+
+### The route that does work
+
+Live memory pokes via **PS3MAPI**, which webMAN MOD exposes directly. This is
+the same mechanism used successfully for other titles on this console, and it
+uses **no Artemis and no launch hook** — the game is started normally, then
+attached, then poked.
+
+Confirm it is available on your setup:
+
+```
+http://<console>/netstatus.ps3?artemis     -> should read ARTEMIS : Disabled
+http://<console>/home.ps3mapi              -> PS3MAPI command page
+```
+
+The PS3MAPI command page lists the primitives used for this:
+
+```
+[200] sys_dbg_read_process_memory
+[201] sys_dbg_write_process_memory
+```
+
+`sys_dbg_write_process_memory` is the write primitive behind a NetCheat-style
+poke. Addresses for these codes are in
+`codelists\Yakuza Dead Souls BLUS30826 01.00.ncl`.
+
+> **Unverified.** No code below has been applied through this route yet. The
+> addresses are correct in form and match the upstream US set, but they have
+> never been written to a running copy of this game on real hardware.
+
+### What is verified
+
+Nothing has been applied successfully on the console yet. This table fills in as
+codes are confirmed. The procedure to fill it in is in
 [`VERIFY_SAVEPATCH.md`](VERIFY_SAVEPATCH.md).
 
 ### Savepatch codes (Apollo `BLUS30826.savepatch`)
@@ -165,7 +233,7 @@ block in `patches/BLUS30826.our.savepatch`; the grouping matches the patch's own
 
 | cheat | applied on console | effect seen in game | notes |
 |---|---|---|---|
-| all 12 codes | not yet | not yet | region label itself is unconfirmed — see [`SOURCES.md`](SOURCES.md#how-the-region-was-established) |
+| all 12 codes | not yet | not yet | region label itself is unconfirmed — see [`SOURCES.md`](SOURCES.md#how-the-region-was-established). **Engine route (Artemis) is closed** — see [What has been tried on hardware](#what-has-been-tried-on-hardware). Apply these through PS3MAPI instead. |
 
 Codes in this repo are only listed as working once they have been booted and
 seen to work on the USA disc. An address that has been *found* but not *tested*
@@ -224,12 +292,29 @@ Three tools for looking at a save on the PC. They exist to make a patch
 | [`tools/save_inspector.py`](tools/save_inspector.py) | lists a save folder's files, reads `PARAM.SFO`, shows the bytes at every offset the patch targets |
 | [`tools/savepatch_apply.py`](tools/savepatch_apply.py) | dry-runs a patch against a `USER01` and prints every byte it would change |
 | [`tools/compare_regions.py`](tools/compare_regions.py) | diffs two `.savepatch` files by offset — how the US/EU difference was found |
+| [`tools/read_self.py`](tools/read_self.py) | reads a PS3 SELF (e.g. `EBOOT.BIN`) and **measures** where plaintext ends and ciphertext begins. Never decrypts. |
+| [`tools/test_read_self.py`](tools/test_read_self.py) | self-test for the above, on synthetic files with known properties |
 
 ```
 python tools/save_inspector.py  <save_folder> [--patch <file>]
 python tools/savepatch_apply.py <patch> <USER01> [--only "Max Money"] [--write <out>]
 python tools/compare_regions.py <a.savepatch> <b.savepatch>
+python tools/read_self.py       <EBOOT.BIN> [--quiet-scan]
 ```
+
+`read_self.py` exists because "the EBOOT is encrypted" was being asserted
+without evidence. It reports the plaintext SELF header, then walks the file in
+chunks and measures entropy and printable-character ratio, so the boundary
+between header and ciphertext is a **measurement, not a claim**. On the
+`BLUS30826` EBOOT the result is: ciphertext begins in the very first 4 KB chunk
+(entropy 7.95–7.96, ~37% printable — the rate you get from random bytes) and
+stays that way for the whole 22 MB. The same holds for
+`data/module/ps3/dfengine.sprx` and `ogrez_shader_ps3.ppu.sprx`.
+
+It deliberately does **not** try to enumerate segments. An earlier version
+declared `header_size` (0x980) to be a segment table; the bytes there turned out
+to be random, and rather than print a table of nonsense parsed from ciphertext
+the tool now says so and skips it.
 
 `savepatch_apply.py` **writes nothing unless `--write` is passed**, and never
 overwrites its input. Dry run is the default on purpose.
@@ -321,18 +406,20 @@ much easier for an ordinary player.
 
 ### Runtime codes on CFW
 
-> **Caution — read before using the codelist.** [`USING_RUNTIME_CHEATS.md`](USING_RUNTIME_CHEATS.md)
-> recommends Artemis. On the hardware used for this repo, **Artemis has been
-> unstable and has crashed the console.** Nothing in the runtime codelist has
-> been loaded on a console yet. If you use a different engine that reads `.ncl`
-> codelists, that is the safer path; if you use Artemis anyway, expect it may
-> fail at the engine, not at the code.
+> **Do not use Artemis on this hardware.** It froze the console on launch, twice,
+> including with no code attached. Details in
+> [What has been tried on hardware](#what-has-been-tried-on-hardware).
+>
+> The working route on this setup is a **live memory poke via PS3MAPI**, the
+> NetCheat-style method. Start the game normally (Artemis off), attach to the
+> process, then write the address/value pair. That route does not use the launch
+> hook that appears to be causing the freezes.
 
 1. Put the game on the console's internal drive or a USB drive.
-2. Load your cheat engine of choice.
+2. Load your cheat engine of choice — on this setup, **PS3MAPI**, not Artemis.
 3. Select the game by its serial, `BLUS-30826`.
-4. Enter the code from this repo, or use the `.ncl` file.
-5. Apply, then play.
+4. Enter the code from this repo, or its address/value pair from the `.ncl`.
+5. Write the value, then check the effect in game.
 
 The game must be running before runtime codes take effect.
 
