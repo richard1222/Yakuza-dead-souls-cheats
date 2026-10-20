@@ -158,6 +158,43 @@ Useful contributions, in rough order of value:
    `USER01` and the folder layout. Do not publish the save itself.
 3. **A correction** to the source survey in [`SOURCES.md`](SOURCES.md).
 
+### PC-side save tools
+
+Three tools for looking at a save on the PC. They exist to make a patch
+*understandable*, not to apply it — see the warning below.
+
+| tool | what it does |
+|---|---|
+| [`tools/save_inspector.py`](tools/save_inspector.py) | lists a save folder's files, reads `PARAM.SFO`, shows the bytes at every offset the patch targets |
+| [`tools/savepatch_apply.py`](tools/savepatch_apply.py) | dry-runs a patch against a `USER01` and prints every byte it would change |
+| [`tools/compare_regions.py`](tools/compare_regions.py) | diffs two `.savepatch` files by offset — how the US/EU difference was found |
+
+```
+python tools/save_inspector.py  <save_folder> [--patch <file>]
+python tools/savepatch_apply.py <patch> <USER01> [--only "Max Money"] [--write <out>]
+python tools/compare_regions.py <a.savepatch> <b.savepatch>
+```
+
+`savepatch_apply.py` **writes nothing unless `--write` is passed**, and never
+overwrites its input. Dry run is the default on purpose.
+
+> **A save patched on the PC will be rejected by the console.** A PS3 save is
+> encrypted and `PARAM.PFD` is a signature over it. These tools do no
+> encryption and no signing. They are for understanding a patch and for
+> checking, after the fact, that bytes landed where the patch claims. The only
+> way to patch a real save is Apollo Save Tool **on the console**, which
+> re-encrypts and re-signs.
+
+Two things these tools deliberately do, because both were learned the hard way:
+
+- **The target list is read from the patch, never hardcoded.** An earlier
+  version of `save_inspector.py` hardcoded three offsets (`0x0000`, `0x0004`,
+  `0x0008`) that do not match the real patch, and would print bytes from the
+  file header while labelling them `Max Money`. It looked authoritative and was
+  wrong. Reading the patch means it cannot drift.
+- **Out-of-range offsets are reported as `OUT OF RANGE`, not as a value.** A
+  byte read past the end of a short file is not a result.
+
 Please do **not**:
 
 - mark anything verified without a console test
