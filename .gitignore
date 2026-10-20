@@ -1,8 +1,14 @@
 # Build artifacts and staged downloads.
 #
-# The savepatch is deliberately NOT committed. It is GPL-3.0 (c) Damian Parrino
-# and belongs to the Apollo project; tools/fetch_savepatch.py downloads and
-# verifies it on demand instead. See that script's header for the reasoning.
+# Apollo's savepatch is deliberately NOT committed. It is GPL-3.0 (c) Damian
+# Parrino and belongs to the Apollo project; tools/fetch_savepatch.py downloads
+# and verifies it on demand instead. See that script's header for the reasoning.
+#
+# Our OWN patch IS committed: patches/BLUS30826.our.savepatch is this repo's
+# work, built by tools/build_savepatch.py, so it is explicitly un-ignored below.
 __pycache__/
 *.pyc
-patches/
+# Git will not look inside an ignored directory, so patches/ is un-ignored and
+# its CONTENTS ignored individually. Our own patch is then explicitly allowed.
+patches/*
+!patches/BLUS30826.our.savepatch

@@ -45,6 +45,12 @@ Full survey of every source found, with what each one covers:
 The verification procedure, and what each savepatch code actually writes:
 [`VERIFY_SAVEPATCH.md`](VERIFY_SAVEPATCH.md).
 
+Our own savepatch (built from a code table, cross-checked against the published
+set, structurally validated): `patches\BLUS30826.our.savepatch`. Built by
+[`tools/build_savepatch.py`](tools/build_savepatch.py), checked by
+[`tools/validate_savepatch.py`](tools/validate_savepatch.py), and the validator
+itself is proven by [`tools/test_validator.py`](tools/test_validator.py).
+
 **Ready to use — god mode, infinite ammo, and more (runtime codes):**
 [`USING_RUNTIME_CHEATS.md`](USING_RUNTIME_CHEATS.md) and
 `codelists\Yakuza Dead Souls BLUS30826 01.00.ncl`.
