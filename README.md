@@ -10,22 +10,35 @@ real CFW hardware. No emulator results are claimed here.
 
 ## Why this repo exists
 
-Nothing useful has been published for the **USA** disc.
+Nothing **verified** has been published for the **USA** disc.
 
-Every cheat collection that covers this game targets the **Europe** disc
-(`BLES-01399`). GameHacking.org has an entry for Europe and **none at all for
-BLUS-30826**. The save-editor codes in circulation likewise target the EU
-`USER01` save file.
+The raw material does exist, but it is scattered and mislabelled:
 
-That matters because these are compiled addresses. Cheat codes for a PS3 game
-point at offsets inside the boot ELF, and the US and EU builds are different
-executables. An EU code applied to a US disc is not "probably fine" — it will
-usually write to the wrong place or do nothing.
+- The runtime codes for the US build sit **unlabelled** in Aldo's Artemis
+  database — the entry has no serial in it at all, which is why a search for
+  "BLUS30826 cheats" does not find them.
+- GameHacking.org has an entry for the **Europe** disc (`BLES-01399`) and
+  **none for the US serial**.
+- The big save-edit set is packaged for Europe, though an explicit US
+  `BLUS30826` savepatch does exist in Apollo.
+
+That matters because runtime codes are compiled addresses. They point at offsets
+inside the boot executable, and the US and EU builds are different executables.
+An EU code applied to a US disc is not "probably fine" — it will usually write to
+the wrong place or do nothing. You can see this directly: for the same cheat, the
+US and EU sets use different code addresses.
 
 So the goal is simple:
 
 > **Produce cheats that are actually valid for BLUS-30826, and prove each one on
 > hardware before publishing it.**
+
+The gap this repo fills is not "no addresses exist." It is: **no single,
+region-correct, hardware-verified, properly credited USA collection exists.**
+That is what we are building.
+
+Full survey of every source found, with what each one covers:
+[`SOURCES.md`](SOURCES.md).
 
 ## What is verified
 
@@ -88,16 +101,21 @@ recipe applies to a US save without checking.
 
 ## Credits and sources
 
-Existing work that this repo builds on or cross-checks against, all of which
-targets the Europe disc:
+Existing work that this repo builds on or cross-checks against:
 
-- **luc-ita** — four NetCheat PS3 runtime codes (GameHacking.org)
-- **krustytoe**, **www55.atwiki.jp**, **savedata.jp** — the original save-editor
-  code set (via save-editor.com)
-- **Apollo Save Tool** — the `BLES01399.savepatch` save patch set
+- **jgduff1** — the US runtime code set (unlabelled in Aldo's Artemis database)
+  and the only cheat PKG set found that explicitly names `BLUS30826`
+- **luc-ita** — four NetCheat PS3 runtime codes for Europe (GameHacking.org)
+- **jijibecali** — the Europe runtime code set (Aldo's database)
+- **krustytoe**, **www55.atwiki.jp**, **savedata.jp**, and *Game Genie For PS3*
+  — the original save-editor code set, packaged by Apollo as `BLUS30826.savepatch`
+- **bucanero / Apollo Save Tool** — the `BLUS30826` save patch set and patcher
 
 Where a credit is due it is given on the specific code. If you believe
 something here is uncredited or miscredited, open an issue.
+
+A per-code attribution table lives in
+[`SOURCES.md`](SOURCES.md#1-runtime-codes-artemis--netcheat).
 
 ## Compatibility
 
