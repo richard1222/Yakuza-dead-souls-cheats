@@ -5,11 +5,14 @@ hardware. No emulator results are claimed, and **no cheat has been verified
 yet** — codes only count as verified once they have been applied on a console
 and the effect seen in game. Every table below says what has actually been done.
 
-**Status:** the runtime route via Artemis is **closed** — it froze the
-console twice, both times at game launch, including once with no code attached.
-The route that does work on this hardware is **live memory pokes via PS3MAPI**
-(the NetCheat-style method), which needs no Artemis. See
-[What has been tried on hardware](#what-has-been-tried-on-hardware).
+**Status:** Artemis is **ruled out** — the game froze with it enabled *and*
+disabled, so it was never the cause (attempt 4 in
+[What has been tried on hardware](#what-has-been-tried-on-hardware)). The working
+route on this console is **live memory pokes over webMAN MOD's PS3MAPI HTTP
+endpoints** — no Artemis, no launch hook. That method is **already
+hardware-verified on this same console** for another title
+([`SHC-cheats-for-ps3`](https://github.com/richard1222/SHC-cheats-for-ps3));
+this repo applies it to `BLUS30826`.
 
 - **Game:** Yakuza: Dead Souls (Ryu ga Gotoku OF THE END)
 - **Disc serial:** `BLUS-30826` (USA) — **confirmed**, read from the disc
@@ -68,9 +71,10 @@ itself is proven by [`tools/test_validator.py`](tools/test_validator.py).
 **Runtime codes (a cheat engine on the console):**
 [`USING_RUNTIME_CHEATS.md`](USING_RUNTIME_CHEATS.md) and
 `codelists\Yakuza Dead Souls BLUS30826 01.00.ncl`. **Read the warning in that
-file first:** the codelist itself is built and is correct in form, but it has
-never been loaded on a console, and the usual engine for it (Artemis) has been
-unstable on the hardware used here. It is not "ready to use" — it is untested.
+file first:** the codelist is built and correct in form, but it has never been
+applied on a console. Use the **PS3MAPI** route, *not* Artemis — see
+[The route that works](#the-route-that-works). It is not "ready to use" — it is
+untested.
 
 What was read off the disc, and how to reproduce it:
 [`DISC.md`](DISC.md).
@@ -111,56 +115,80 @@ and it is recorded here rather than quietly deleted.
 | 1 | Artemis enabled in webMAN MOD (1.47.50b), game launched | **console froze** — screen stuck, audio stopped | see below |
 | 2 | Artemis confirmed `Enabled` via `/netstatus.ps3?artemis`; game launched again | **froze again**; `art.log` showed `Attached PID=…` | reproduced |
 | 3 | Console restarted to clear Artemis (could not be shut off without a restart) | Artemis off; PS3 clean | — |
+| 4 | **Artemis confirmed `Disabled`**, game launched | **froze a third time** | **Artemis is NOT the cause** |
+| 5 | Rebooted, launched again | **ran normally** | freeze is **intermittent**, not caused by Artemis |
 
-### What the Artemis failures do and do not show
+### What the freezes do and do not show
 
 **Established:**
 
-- Artemis is **Enabled/Disabled** state is reported by
-  `/netstatus.ps3?artemis` on this setup, and enabling it made the game freeze.
-- The freeze happened on the **second** attempt too, which is a reproduction
-  rather than a one-off.
+- The game froze **three times** with Artemis both **on and off**. Since attempt 4
+  froze with Artemis `Disabled`, **Artemis is ruled out as the cause.**
+- Attempt 5 ran normally with no config change, so the freeze is **intermittent**.
 - On the first freeze **no code was ever attached** and **no `Artemis PS3 / Start
   to Attach` notification appeared**.
 
 **Not established:**
 
-- That any *individual cheat code* is broken. No code was ever applied. A code
-  that was never written to memory cannot freeze a game, so the freeze is
-  attributed to the **engine hook at launch**, not to the codes.
-- Any code address being wrong. The addresses remain **untested**, not failed.
+- The cause of the intermittent freeze. An earlier theory — the game installed
+  **twice** at once (`/dev_hdd0/PS3ISO/Yakuza - Dead Souls (USA).iso` **and**
+  `/dev_hdd0/GAMES/Yakuza - Dead Souls (USA)`) — remains **untested**. A JB folder
+  named by title rather than by serial is a known source of odd behaviour.
+- That any *individual cheat code* is broken. No code has ever been applied. A
+  code that was never written to memory cannot freeze a game.
 
-**Conclusion:** Artemis is not usable on this hardware. The runtime codes are
-therefore still unverified, but they have **not** been disproven.
+**Conclusion:** the freeze is unrelated to cheats, and unrelated to Artemis. The
+runtime codes remain **untested**, not failed.
 
-### The route that does work
+### The route that works
 
-Live memory pokes via **PS3MAPI**, which webMAN MOD exposes directly. This is
-the same mechanism used successfully for other titles on this console, and it
-uses **no Artemis and no launch hook** — the game is started normally, then
-attached, then poked.
-
-Confirm it is available on your setup:
-
-```
-http://<console>/netstatus.ps3?artemis     -> should read ARTEMIS : Disabled
-http://<console>/home.ps3mapi              -> PS3MAPI command page
-```
-
-The PS3MAPI command page lists the primitives used for this:
+Live memory writes over **webMAN MOD's PS3MAPI HTTP endpoints**. This needs no
+Artemis, no NetCheat, and nothing installed — a browser or a shell is enough.
+The method is **already verified on real hardware** for Super Heroine Chronicle
+on this same console, where Infinite SP, Unlimited Turns and a god-mode HP lock
+all worked.
 
 ```
-[200] sys_dbg_read_process_memory
-[201] sys_dbg_write_process_memory
+GET http://<PS3IP>/getmem.ps3mapi?proc=<pid>&addr=0x0154BDA4&len=4      (addr needs 0x)
+GET http://<PS3IP>/setmem.ps3mapi?proc=<pid>&addr=0154BDA4&oper=0&val=35981264   (no 0x)
 ```
 
-`sys_dbg_write_process_memory` is the write primitive behind a NetCheat-style
-poke. Addresses for these codes are in
-`codelists\Yakuza Dead Souls BLUS30826 01.00.ncl`.
+`oper` accepts `0`=Set, `38`=And, `124`=Or, `94`=Xor, `43`=Add, `45`=Sub.
 
-> **Unverified.** No code below has been applied through this route yet. The
-> addresses are correct in form and match the upstream US set, but they have
-> never been written to a running copy of this game on real hardware.
+Notes learned the hard way on this console, worth knowing before you write
+anything:
+
+- `getmem` `addr=` **needs** the `0x` prefix; `setmem` `addr=` **must not** have it.
+- `len=` per read is capped at **256 bytes**.
+- The PS3MAPI server is **single-threaded** — parallel requests drop connections.
+  Read sequentially.
+- The **PS3 is big-endian**. `557` is the bytes `00 00 02 2D`. Searching
+  little-endian finds nothing at all.
+- The `pid=` changes every launch, so read it from `http://<IP>/cpursx.ps3`
+  instead of hardcoding it.
+
+**A ready-made tool for this game is in
+[`tools/yakuza_mem.ps1`](tools/yakuza_mem.ps1):**
+
+```powershell
+# read-only status — writes nothing
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/yakuza_mem.ps1 -IP <ip> -Mode status
+
+# dry run (default) — shows what would change
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/yakuza_mem.ps1 -IP <ip> -Mode poke -Code "Infinite Health"
+
+# write it
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/yakuza_mem.ps1 -IP <ip> -Mode poke -Code "Infinite Health" -Force
+```
+
+It reads its code table from this repo's codelist and has been checked to match
+**24/24** — it cannot drift from the verified set. It refuses to run without an
+IP, refuses to write blind if it cannot read the address first, and reports
+failure rather than claiming success when the console is unreachable.
+
+> **Still unverified.** No code has been applied to *this* game yet. The addresses
+> match the upstream US set 24/24, but matching is not applying — a row in the
+> table below only fills in when the effect is seen on screen.
 
 ### What is verified
 
@@ -233,7 +261,7 @@ block in `patches/BLUS30826.our.savepatch`; the grouping matches the patch's own
 
 | cheat | applied on console | effect seen in game | notes |
 |---|---|---|---|
-| all 12 codes | not yet | not yet | region label itself is unconfirmed — see [`SOURCES.md`](SOURCES.md#how-the-region-was-established). **Engine route (Artemis) is closed** — see [What has been tried on hardware](#what-has-been-tried-on-hardware). Apply these through PS3MAPI instead. |
+| all 12 codes | not yet | not yet | region label itself is unconfirmed — see [`SOURCES.md`](SOURCES.md#how-the-region-was-established). Apply through **PS3MAPI**, not Artemis — see [The route that works](#the-route-that-works). |
 
 Codes in this repo are only listed as working once they have been booted and
 seen to work on the USA disc. An address that has been *found* but not *tested*
@@ -406,14 +434,13 @@ much easier for an ordinary player.
 
 ### Runtime codes on CFW
 
-> **Do not use Artemis on this hardware.** It froze the console on launch, twice,
-> including with no code attached. Details in
-> [What has been tried on hardware](#what-has-been-tried-on-hardware).
+> **Do not use Artemis on this hardware.** It was tested and is unnecessary — the
+> game froze with Artemis both enabled and disabled, so it is not the cause, and
+> it is not needed for any code here.
 >
-> The working route on this setup is a **live memory poke via PS3MAPI**, the
-> NetCheat-style method. Start the game normally (Artemis off), attach to the
-> process, then write the address/value pair. That route does not use the launch
-> hook that appears to be causing the freezes.
+> Use a **live memory write over PS3MAPI** instead. Start the game normally, then
+> write the address/value pair. See
+> [The route that works](#the-route-that-works).
 
 1. Put the game on the console's internal drive or a USB drive.
 2. Load your cheat engine of choice — on this setup, **PS3MAPI**, not Artemis.

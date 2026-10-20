@@ -4,23 +4,38 @@ Runtime codes patch the game's memory while it runs. They give you **Infinite
 Health** (god mode) and **Infinite Ammo**, plus items, money and ability points.
 They reset when you quit the game.
 
-> ## Warning: this route is untested and the usual engine is unstable
+> ## Warning: this route is untested
 >
-> Two separate problems, and either one can stop you:
+> **The codes have never been loaded on a console.** They are authored by
+> **jgduff1** and taken from Aldo's database, where the entry carries **no
+> serial label**. That the set is the US one is an inference, not a fact
+> established on hardware. See the warning at the bottom.
 >
-> 1. **The codes have never been loaded on a console.** They are authored by
->    **jgduff1** and taken from Aldo's database, where the entry carries **no
->    serial label**. That the set is the US one is an inference, not a fact
->    established on hardware. See the warning at the bottom.
-> 2. **Artemis has crashed the console** on the hardware used for this repo.
->
-> For problem 1: the **savepatch** route is the better bet — it needs no cheat
-> engine, and its addresses are at least region-confirmed by construction. See
-> [`VERIFY_SAVEPATCH.md`](VERIFY_SAVEPATCH.md).
->
-> For problem 2: use a different engine that reads `.ncl` codelists if you have
-> one. If you use Artemis anyway, the failure may be the engine, not the code —
-> do not record it as "the code is wrong" without checking.
+> For a route with no inference in it, the **savepatch** route is the better bet
+> — it needs no cheat engine, and its addresses are region-confirmed by
+> construction. See [`VERIFY_SAVEPATCH.md`](VERIFY_SAVEPATCH.md).
+
+## Do NOT use Artemis — use PS3MAPI
+
+Artemis was tested on this console and **froze the game three times**. It was
+then ruled out: the freeze also happened with Artemis **disabled**, and a later
+launch ran fine with no config change. So Artemis is neither the cause nor
+useful.
+
+Apply these codes through **webMAN MOD's PS3MAPI endpoints** instead. That is a
+plain HTTP memory write — no launch hook, nothing to install — and it is
+**already hardware-verified on this same console** for another title.
+
+```
+GET http://<PS3IP>/getmem.ps3mapi?proc=<pid>&addr=0x0154BDA4&len=4       (addr needs 0x)
+GET http://<PS3IP>/setmem.ps3mapi?proc=<pid>&addr=0154BDA4&oper=0&val=35981264   (no 0x)
+```
+
+`oper` accepts `0`=Set, `38`=And, `124`=Or, `94`=Xor, `43`=Add, `45`=Sub.
+
+A tool is provided: [`tools/yakuza_mem.ps1`](tools/yakuza_mem.ps1). It reads its
+code table from this repo's codelist (checked 24/24, so it cannot drift) and
+refuses to write blind.
 
 The codelist is well-formed and named for your serial and app version:
 
@@ -34,9 +49,9 @@ codelists\Yakuza Dead Souls BLUS30826 01.00.ncl
 ## What you need
 
 - The game running on your CFW console.
-- A PS3 cheat engine that loads `.ncl` codelists. **Artemis is unstable here —
-  see the warning above.**
-- This `.ncl` file copied to the console.
+- **webMAN MOD** with its web server reachable (this is what provides PS3MAPI).
+  **Not Artemis** — see the warning above.
+- The codelist in this repo, or just the address/value pairs from it.
 
 ## Install
 
