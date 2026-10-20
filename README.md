@@ -45,6 +45,11 @@ Full survey of every source found, with what each one covers:
 The verification procedure, and what each savepatch code actually writes:
 [`VERIFY_SAVEPATCH.md`](VERIFY_SAVEPATCH.md).
 
+**Handing this to someone else?** [`TASK_FOR_MUSE.md`](TASK_FOR_MUSE.md) is a
+step-by-step brief: make a save, get it off the console, apply one code, report
+the result. It states the rules so a helper does not accidentally claim a
+result this repo would not accept.
+
 Our own savepatch (built from a code table, cross-checked against the published
 set, structurally validated): `patches\BLUS30826.our.savepatch`. Built by
 [`tools/build_savepatch.py`](tools/build_savepatch.py), checked by
@@ -119,6 +124,49 @@ confirmed. The procedure to fill it in is in
 Codes in this repo are only listed as working once they have been booted and
 seen to work on the USA disc. An address that has been *found* but not *tested*
 is marked as such and kept out of any release.
+
+### What does NOT count as verification
+
+Read this before ticking anything in the table above. It is the rule most
+often broken by accident, including by people trying to help.
+
+**A downloaded save is not verification.** Testing a patch against a save taken
+from GameFAQs, Apollo's save database, or anywhere else proves only that our
+patch writes bytes where it says it does. It does **not** prove the game reads
+those bytes as money, HP, or level, because it was never loaded on a console.
+A downloaded-save result is a *sanity check on the patch*, and may be recorded
+as such — never as a verified cheat.
+
+**An emulator result is not verification.** RPCS3 (or any emulator) is useful
+for functional testing, but memory layout and timing differ from real
+hardware. This repo records emulator results separately or not at all.
+
+**"The address is correct" is not verification.** Understanding what a code
+*should* do is not evidence that it *does* it.
+
+The only thing that fills a row in the table above is: the code was applied on
+the console, the game was loaded, and the effect was seen on screen. Anything
+less is labelled as what it is.
+
+### If you are helping with this repo
+
+Useful contributions, in rough order of value:
+
+1. **A result from a real console** — including a failure or a crash. A crash
+   is a real finding and belongs in the table.
+2. **A save file inspection** — the file list of a `BLUS30826` save, to confirm
+   `USER01` and the folder layout. Do not publish the save itself.
+3. **A correction** to the source survey in [`SOURCES.md`](SOURCES.md).
+
+Please do **not**:
+
+- mark anything verified without a console test
+- use Europe (`BLES01399`) code addresses on the USA build — they differ, see
+  [`SOURCES.md`](SOURCES.md#how-the-region-was-established)
+- publish save files, `PARAM.PFD`, account IDs, or anything else personal
+  (a PS3 save carries the original account's ID; it is not yours to share)
+- commit Apollo's `BLUS30826.savepatch` — it is GPL-3.0 and is fetched on
+  demand instead. Our own patch is `patches/BLUS30826.our.savepatch`.
 
 ## What this repo is not
 
