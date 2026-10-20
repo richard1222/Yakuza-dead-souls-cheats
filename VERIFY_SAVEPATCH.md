@@ -29,11 +29,32 @@ If yes, the whole region question is settled for the save side.
    the CLI, for applying the patch.
 3. A **backup of the save**, taken before any edit.
 
+Python is only needed to fetch and verify the patch. If you would rather not run
+it, you can download the patch from the URL in the next section by hand — but
+then you lose the integrity check, and you must confirm the file says
+`BLUS30826` and not `BLES01399`.
+
 ## The patch
 
-Apollo's own `BLUS30826.savepatch`, unmodified:
+Apollo's own `BLUS30826.savepatch`, **unmodified**. Fetch and verify it with:
 
-<https://cdn.jsdelivr.net/gh/bucanero/apollo-patches@main/PS3/BLUS30826.savepatch>
+```
+python tools/fetch_savepatch.py
+```
+
+That downloads it, checks a pinned SHA-256, and writes it to
+`patches/BLUS30826.savepatch`. It refuses to write anything that does not match,
+so a changed or substituted upstream file fails loudly instead of quietly
+breaking your test run.
+
+The patch is deliberately not committed to this repo: it is GPL-3.0
+(© Damian Parrino) and belongs to the Apollo project. Fetching keeps this repo's
+own content separate. The tool does not modify the file.
+
+- **Pinned artifact:** 1,527 bytes,
+  SHA-256 `76ccd5023f762815e8a8a1c6d7019ffe2e23ab06f42918e7ea74307cef1b479f`
+- **Sources tried:** jsDelivr CDN (what Apollo's own site links), then GitHub raw
+- **Upstream:** <https://cdn.jsdelivr.net/gh/bucanero/apollo-patches@main/PS3/BLUS30826.savepatch>
 
 Target file inside the save folder: `USER01`.
 
@@ -76,6 +97,8 @@ problem is found before anything risky is applied.
 1. Make a save with some money, some items, and a known level.
 2. **Copy the save off the console.** This is the rollback.
 3. Note down: money, EXP, level, HP, and one storage item count.
+4. Get the patch and confirm it verifies:
+   `python tools/fetch_savepatch.py`
 
 If anything later goes wrong, restore this copy. Do not skip this.
 

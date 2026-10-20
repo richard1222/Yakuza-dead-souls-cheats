@@ -1,4 +1,8 @@
+# Build artifacts and staged downloads.
+#
+# The savepatch is deliberately NOT committed. It is GPL-3.0 (c) Damian Parrino
+# and belongs to the Apollo project; tools/fetch_savepatch.py downloads and
+# verifies it on demand instead. See that script's header for the reasoning.
 __pycache__/
 *.pyc
-
-
+patches/
