@@ -40,13 +40,41 @@ That is what we are building.
 Full survey of every source found, with what each one covers:
 [`SOURCES.md`](SOURCES.md).
 
+The verification procedure, and what each savepatch code actually writes:
+[`VERIFY_SAVEPATCH.md`](VERIFY_SAVEPATCH.md).
+
 ## What is verified
 
-Nothing yet. This table fills in as codes are confirmed on the console.
+Nothing has been applied on the console yet. This table fills in as codes are
+confirmed. The procedure to fill it in is in
+[`VERIFY_SAVEPATCH.md`](VERIFY_SAVEPATCH.md).
 
-| cheat | status | notes |
-|---|---|---|
-| — | — | — |
+### Savepatch codes (Apollo `BLUS30826.savepatch`)
+
+| cheat | applied on console | effect seen in game | notes |
+|---|---|---|---|
+| Max Money | not yet | not yet | single 32-bit write — the region test |
+| Max EXP | not yet | not yet | |
+| Max Soul Points | not yet | not yet | 8-bit write |
+| Max Casino Chips | not yet | not yet | |
+| Max Wooden Tag | not yet | not yet | |
+| Max Mahjong Sticks | not yet | not yet | |
+| Max PachinKO Balls | not yet | not yet | |
+| Max Slots Token | not yet | not yet | |
+| Max Zombies Reward Points | not yet | not yet | |
+| Max All Storage Items | not yet | not yet | 299-slot multi-write — most invasive |
+| Inf Ammo | not yet | not yet | must clear inventory slots 1–6 first |
+| 9999/9999 HP | not yet | not yet | may affect enemies |
+| Level 98 | not yet | not yet | **32-bit write at an odd offset — see plan step 5** |
+| Difficulty (×4) | not yet | not yet | mutually exclusive; one address |
+| Minigame payouts (×9) | not yet | not yet | |
+| Boxcelios | not yet | not yet | |
+
+### Runtime codes (Aldo, unlabelled US set)
+
+| cheat | applied on console | effect seen in game | notes |
+|---|---|---|---|
+| all 12 codes | not yet | not yet | region label itself is unconfirmed — see [`SOURCES.md`](SOURCES.md#how-the-region-was-established) |
 
 Codes in this repo are only listed as working once they have been booted and
 seen to work on the USA disc. An address that has been *found* but not *tested*
