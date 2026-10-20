@@ -48,6 +48,31 @@ The verification procedure, and what each savepatch code actually writes:
 What was read off the disc, and how to reproduce it:
 [`DISC.md`](DISC.md).
 
+## The disc (confirmed)
+
+The USA disc has been read directly, so the target is a checked fact rather
+than an assumption. From `PS3_GAME/PARAM.SFO`:
+
+| field | value |
+|---|---|
+| `TITLE_ID` | **`BLUS30826`** |
+| `TITLE` | `YAKUZA: Dead Souls` |
+| `APP_VER` | `01.00` |
+| `PS3_SYSTEM_VER` | `03.7300` |
+
+So the disc is the USA build, application version `01.00`.
+
+**What this settles:** the serial and game version are known and correct. The
+Aldo runtime code file is `Yakuza Dead Souls 01.00.ncl`, which matches this
+version.
+
+**What it does not settle:** the runtime code addresses themselves.
+`USRDIR/EBOOT.BIN` is a `SCE\0` **SELF** — a signed, encrypted executable, as a
+retail disc should be. Its code cannot be read off-console, so the runtime
+addresses still cannot be checked from a PC. That needs the console.
+
+Full record and how to reproduce it: [`DISC.md`](DISC.md).
+
 ## What is verified
 
 Nothing has been applied on the console yet. This table fills in as codes are
@@ -132,6 +157,18 @@ The game must be running before runtime codes take effect.
 The exact save container differs between regions. Do not assume an EU save
 recipe applies to a US save without checking.
 
+To get the USA savepatch and check it:
+
+```
+python tools/fetch_savepatch.py
+```
+
+It downloads Apollo's `BLUS30826.savepatch`, verifies it against a pinned
+SHA-256, and stages it for you. It refuses to write a file that does not match,
+so a substituted patch (for example, the EU one) fails loudly rather than
+quietly corrupting a save. Step-by-step test order:
+[`VERIFY_SAVEPATCH.md`](VERIFY_SAVEPATCH.md).
+
 ## Credits and sources
 
 Existing work that this repo builds on or cross-checks against:
@@ -154,7 +191,7 @@ A per-code attribution table lives in
 
 | region | serial | covered by this repo |
 |---|---|---|
-| USA | `BLUS-30826` | **yes — this is the target** |
+| USA | `BLUS-30826` | **yes — this is the target (confirmed from disc)** |
 | Europe | `BLES-01399` | no — addresses differ, use the existing EU sets |
 | Japan | `BLJM60316` | no |
 | PSN (US) | `NPUB31509` | no |
