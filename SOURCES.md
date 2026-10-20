@@ -69,7 +69,28 @@ addresses. Neither one can be substituted for the other.
 
 ### How the region was established
 
-The unlabelled set is *claimed* as US here, so the reasoning is stated rather
+**The disc is confirmed.** The USA disc was read directly
+(`Yakuza - Dead Souls (USA).iso`, 21,724,135,424 bytes). Its
+`PS3_GAME/PARAM.SFO` contains:
+
+| field | value |
+|---|---|
+| `TITLE_ID` | `BLUS30826` |
+| `TITLE` | `YAKUZA: Dead Souls` |
+| `APP_VER` | `01.00` |
+| `PS3_SYSTEM_VER` | `03.7300` |
+| `CATEGORY` | `DG` |
+
+That is the USA serial and app version **as fact, read from the disc**, and it
+matches the `01.00` in Aldo's runtime code filename. The disc also mounts as a
+genuine PS3 volume (`*PLAYSTATION(R)3`, `*SCEI BD/DVD Generator`), and
+`USRDIR/EBOOT.BIN` is a `SCE\0` **SELF** (encrypted), as a retail disc should be.
+
+So the *disc side* is settled. The *code set* side is still inference, for the
+reasons below — and it cannot be closed from the PC, because the executable is
+encrypted.
+
+The unlabelled Aldo set is claimed as US here; the reasoning is stated rather
 than assumed:
 
 1. **Aldo's own index lists Dead Souls twice** — once with a blank serial
@@ -86,8 +107,10 @@ than assumed:
    cheat list matches this file's cheats closely.
 
 That is enough to treat it as the US set for testing, but **not** enough to
-publish it labelled "USA" as established fact. Treat it as *US, to be confirmed
-on hardware* — which is exactly what our repo's verify-on-hardware rule is for.
+publish it labelled "USA" as established fact. The executable is encrypted, so
+the addresses cannot be checked against the disc off-console. Treat it as
+*US, to be confirmed on hardware* — which is exactly what our repo's
+verify-on-hardware rule is for.
 
 ### 1c. GameHacking.org — Europe only, 4 codes
 

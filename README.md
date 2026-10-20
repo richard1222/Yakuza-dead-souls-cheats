@@ -4,7 +4,9 @@ Cheats for the **USA** PS3 release of *Yakuza: Dead Souls*, built and tested on
 real CFW hardware. No emulator results are claimed here.
 
 - **Game:** Yakuza: Dead Souls (Ryu ga Gotoku OF THE END)
-- **Disc serial:** `BLUS-30826` (USA)
+- **Disc serial:** `BLUS-30826` (USA) — **confirmed**, read from the disc
+  (`PARAM.SFO`). See [`DISC.md`](DISC.md).
+- **App version:** `01.00`
 - **Tested on:** PS3 slim 2001a, CFW 4.93 Evilnat
 - **Status:** in progress — see [What is verified](#what-is-verified)
 
@@ -42,6 +44,9 @@ Full survey of every source found, with what each one covers:
 
 The verification procedure, and what each savepatch code actually writes:
 [`VERIFY_SAVEPATCH.md`](VERIFY_SAVEPATCH.md).
+
+What was read off the disc, and how to reproduce it:
+[`DISC.md`](DISC.md).
 
 ## What is verified
 
