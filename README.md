@@ -186,6 +186,36 @@ It reads its code table from this repo's codelist and has been checked to match
 IP, refuses to write blind if it cannot read the address first, and reports
 failure rather than claiming success when the console is unreachable.
 
+### Finding an address that is not in the list
+
+The 24 codes above have fixed addresses. Anything *not* already published has to
+be found on the console. **[`tools/yakuza_find.ps1`](tools/yakuza_find.ps1)**
+does that by snapshotting memory twice and diffing the two dumps — the same
+technique used to find a live field on another title on this console.
+
+It is **read-only**. There is no code path in it that writes to the PS3, on
+purpose: a wrong guess should cost you a read, not a corrupted game.
+
+```powershell
+# 1. value is X on screen right now — snapshot it
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/yakuza_find.ps1 -IP <ip> -Mode snap -Out a.json
+
+# 2. change the value in game (spend money, take damage) ...
+
+# 3. snapshot again
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/yakuza_find.ps1 -IP <ip> -Mode snap -Out b.json
+
+# 4. diff — you know the before and after numbers, so pass them
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/yakuza_find.ps1 -Mode diff -A a.json -B b.json -From 1920 -To 557
+```
+
+Its diff logic is proven by [`tools/test_yakuza_find.py`](tools/test_yakuza_find.py)
+(**5/5**) against synthetic snapshots with known answers, including a test that
+would fail if the tool decoded little-endian instead of big-endian.
+
+Narrow `-Start`/`-End` if a run takes too long; the default region is a 16 MB
+starting guess and is not yet tuned to this game.
+
 > **Still unverified.** No code has been applied to *this* game yet. The addresses
 > match the upstream US set 24/24, but matching is not applying — a row in the
 > table below only fills in when the effect is seen on screen.
@@ -322,6 +352,15 @@ Three tools for looking at a save on the PC. They exist to make a patch
 | [`tools/compare_regions.py`](tools/compare_regions.py) | diffs two `.savepatch` files by offset — how the US/EU difference was found |
 | [`tools/read_self.py`](tools/read_self.py) | reads a PS3 SELF (e.g. `EBOOT.BIN`) and **measures** where plaintext ends and ciphertext begins. Never decrypts. |
 | [`tools/test_read_self.py`](tools/test_read_self.py) | self-test for the above, on synthetic files with known properties |
+
+### Runtime (console) tools
+
+| tool | what it does |
+|---|---|
+| [`tools/yakuza_mem.ps1`](tools/yakuza_mem.ps1) | reads current values and writes codes over PS3MAPI. Dry-run by default; needs `-Force` to write. Table checked 24/24 against the codelist. |
+| [`tools/yakuza_find.ps1`](tools/yakuza_find.ps1) | **read-only** value finder. Snapshots RAM twice and diffs to locate an address not already published. |
+| [`tools/verify_mem_tool.py`](tools/verify_mem_tool.py) | asserts `yakuza_mem.ps1`'s table still matches the codelist exactly |
+| [`tools/test_yakuza_find.py`](tools/test_yakuza_find.py) | proves the finder's diff logic on synthetic snapshots with known answers (5/5) |
 
 ```
 python tools/save_inspector.py  <save_folder> [--patch <file>]
