@@ -1,14 +1,17 @@
 # Yakuza: Dead Souls cheats — USA (BLUS-30826)
 
-Cheats for the **USA** PS3 release of *Yakuza: Dead Souls*, built and tested on
-real CFW hardware. No emulator results are claimed here.
+Cheats for the **USA** PS3 release of *Yakuza: Dead Souls*, aimed at real CFW
+hardware. No emulator results are claimed, and **nothing in here is verified
+yet** — codes only count as verified once they have been applied on a console
+and the effect seen in game. Every table below says what has actually been done.
 
 - **Game:** Yakuza: Dead Souls (Ryu ga Gotoku OF THE END)
 - **Disc serial:** `BLUS-30826` (USA) — **confirmed**, read from the disc
   (`PARAM.SFO`). See [`DISC.md`](DISC.md).
 - **App version:** `01.00`
-- **Tested on:** PS3 slim 2001a, CFW 4.93 Evilnat
-- **Status:** in progress — see [What is verified](#what-is-verified)
+- **Target hardware:** PS3 slim 2001a, CFW 4.93 Evilnat
+- **Verdict so far:** the disc and addresses are mapped; **no code has been run
+  on a console yet**. See [What is verified](#what-is-verified).
 
 ## Why this repo exists
 
@@ -56,9 +59,12 @@ set, structurally validated): `patches\BLUS30826.our.savepatch`. Built by
 [`tools/validate_savepatch.py`](tools/validate_savepatch.py), and the validator
 itself is proven by [`tools/test_validator.py`](tools/test_validator.py).
 
-**Ready to use — god mode, infinite ammo, and more (runtime codes):**
+**Runtime codes (a cheat engine on the console):**
 [`USING_RUNTIME_CHEATS.md`](USING_RUNTIME_CHEATS.md) and
-`codelists\Yakuza Dead Souls BLUS30826 01.00.ncl`.
+`codelists\Yakuza Dead Souls BLUS30826 01.00.ncl`. **Read the warning in that
+file first:** the codelist itself is built and is correct in form, but it has
+never been loaded on a console, and the usual engine for it (Artemis) has been
+unstable on the hardware used here. It is not "ready to use" — it is untested.
 
 What was read off the disc, and how to reproduce it:
 [`DISC.md`](DISC.md).
@@ -96,24 +102,64 @@ confirmed. The procedure to fill it in is in
 
 ### Savepatch codes (Apollo `BLUS30826.savepatch`)
 
+Our patch contains **28 code blocks / 40 code lines**. Every row below is a real
+block in `patches/BLUS30826.our.savepatch`; the grouping matches the patch's own
+`[GROUP:…]` headings.
+
+**Money and progression**
+
 | cheat | applied on console | effect seen in game | notes |
 |---|---|---|---|
 | Max Money | not yet | not yet | single 32-bit write — the region test |
 | Max EXP | not yet | not yet | |
 | Max Soul Points | not yet | not yet | 8-bit write |
+| Level 98 | not yet | not yet | **32-bit write at an odd offset — see plan step 5** |
+
+**Casino and minigame counters**
+
+| cheat | applied on console | effect seen in game | notes |
+|---|---|---|---|
 | Max Casino Chips | not yet | not yet | |
 | Max Wooden Tag | not yet | not yet | |
 | Max Mahjong Sticks | not yet | not yet | |
 | Max PachinKO Balls | not yet | not yet | |
 | Max Slots Token | not yet | not yet | |
 | Max Zombies Reward Points | not yet | not yet | |
-| Max All Storage Items | not yet | not yet | 299-slot multi-write — most invasive |
-| Inf Ammo | not yet | not yet | must clear inventory slots 1–6 first |
+
+**Health**
+
+| cheat | applied on console | effect seen in game | notes |
+|---|---|---|---|
 | 9999/9999 HP | not yet | not yet | may affect enemies |
-| Level 98 | not yet | not yet | **32-bit write at an odd offset — see plan step 5** |
-| Difficulty (×4) | not yet | not yet | mutually exclusive; one address |
-| Minigame payouts (×9) | not yet | not yet | |
-| Boxcelios | not yet | not yet | |
+
+**Difficulty modifier (choose one — all four share one address)**
+
+| cheat | applied on console | effect seen in game | notes |
+|---|---|---|---|
+| Normal / Hard / Ex-Hard / Dead Souls (Of The End) | not yet | not yet | mutually exclusive; applying two overwrites the first |
+
+**Inventory**
+
+| cheat | applied on console | effect seen in game | notes |
+|---|---|---|---|
+| Inf Ammo | not yet | not yet | 12 writes; must clear inventory slots 1–6 first |
+| Max All Storage Items (Except Weapons) | not yet | not yet | 299-slot multi-write — most invasive code here |
+
+**Minigame challenge (top payouts)**
+
+| cheat | applied on console | effect seen in game | notes |
+|---|---|---|---|
+| Top Pachinko Payout | not yet | not yet | |
+| Top Slots Payout | not yet | not yet | |
+| Cee-Lo | not yet | not yet | |
+| Cho-Han | not yet | not yet | |
+| Koi-Koi | not yet | not yet | |
+| Oicho-Kabu | not yet | not yet | |
+| Roulette | not yet | not yet | |
+| Poker | not yet | not yet | |
+| Blackjack | not yet | not yet | |
+| Baccarat | not yet | not yet | |
+| Boxcelios | not yet | not yet | 8-bit write |
 
 ### Runtime codes (Aldo, unlabelled US set)
 
@@ -158,6 +204,16 @@ Useful contributions, in rough order of value:
    `USER01` and the folder layout. Do not publish the save itself.
 3. **A correction** to the source survey in [`SOURCES.md`](SOURCES.md).
 
+Please do **not**:
+
+- mark anything verified without a console test
+- use Europe (`BLES01399`) code addresses on the USA build — they differ, see
+  [`SOURCES.md`](SOURCES.md#how-the-region-was-established)
+- publish save files, `PARAM.PFD`, account IDs, or anything else personal
+  (a PS3 save carries the original account's ID; it is not yours to share)
+- commit Apollo's `BLUS30826.savepatch` — it is GPL-3.0 and is fetched on
+  demand instead. Our own patch is `patches/BLUS30826.our.savepatch`.
+
 ### PC-side save tools
 
 Three tools for looking at a save on the PC. They exist to make a patch
@@ -195,16 +251,6 @@ Two things these tools deliberately do, because both were learned the hard way:
 - **Out-of-range offsets are reported as `OUT OF RANGE`, not as a value.** A
   byte read past the end of a short file is not a result.
 
-Please do **not**:
-
-- mark anything verified without a console test
-- use Europe (`BLES01399`) code addresses on the USA build — they differ, see
-  [`SOURCES.md`](SOURCES.md#how-the-region-was-established)
-- publish save files, `PARAM.PFD`, account IDs, or anything else personal
-  (a PS3 save carries the original account's ID; it is not yours to share)
-- commit Apollo's `BLUS30826.savepatch` — it is GPL-3.0 and is fetched on
-  demand instead. Our own patch is `patches/BLUS30826.our.savepatch`.
-
 ## What this repo is not
 
 - It is **not** a copy of the Europe cheats with the serial changed. Those
@@ -212,6 +258,48 @@ Please do **not**:
 - It is **not** a save file. No game data or save files are distributed here.
 - It is **not** a piracy aid. You need your own legitimately obtained copy of
   the game.
+
+## Game folder vs ISO
+
+Two containers for the same game. Either works; they differ in how you get it
+onto the console, not in what the cheats do.
+
+| | ISO (`.iso`) | Game folder (JB folder) |
+|---|---|---|
+| transfer | one ~21.7 GB file | thousands of small files |
+| partial failure | re-copy the whole thing | re-copy one file |
+| verification | one hash for one file | per-file hashes |
+| webMAN / multiMAN | reads from `PS3ISO/` | reads from `GAMES/` |
+| load time | same | same |
+
+**A game folder is better for transfer reliability** — a dropped FTP session
+costs you one file, not 20 GB. An ISO is simpler to verify, because there is
+exactly one hash to check.
+
+### Important: neither container changes the cheats
+
+- **Savepatch codes act on your save file.** The container is irrelevant.
+- **Runtime codes act on the game's memory while it runs.** Also identical.
+- **Patching the executable is not on the table either way.** `EBOOT.BIN` is a
+  `SCE\0` SELF — signed and encrypted — and extracting the ISO does **not**
+  decrypt it. See [`DISC.md`](DISC.md).
+
+So: extracting the ISO changes nothing about what is verifiable. It is a
+transfer choice, not a cheat-enabling one.
+
+What a game folder *does* give you is access to the **non-encrypted files** —
+textures, audio, configs — which the ISO makes no easier to reach. Those are the
+only route to learning anything new about addresses from a PC.
+
+### Layout
+
+| where | path the console expects |
+|---|---|
+| internal drive | `dev_hdd0/GAMES/BLUS30826/` |
+| USB drive (root) | `GAMES/BLUS30826/` |
+
+The folder must be named by serial. Inside it is `PS3_GAME/` and
+`PS3_DISC.SFB`, exactly as on the disc.
 
 ## Cheat types
 
@@ -233,11 +321,17 @@ much easier for an ordinary player.
 
 ### Runtime codes on CFW
 
+> **Caution — read before using the codelist.** [`USING_RUNTIME_CHEATS.md`](USING_RUNTIME_CHEATS.md)
+> recommends Artemis. On the hardware used for this repo, **Artemis has been
+> unstable and has crashed the console.** Nothing in the runtime codelist has
+> been loaded on a console yet. If you use a different engine that reads `.ncl`
+> codelists, that is the safer path; if you use Artemis anyway, expect it may
+> fail at the engine, not at the code.
+
 1. Put the game on the console's internal drive or a USB drive.
-2. Load your cheat engine of choice (e.g. Artemis).
+2. Load your cheat engine of choice.
 3. Select the game by its serial, `BLUS-30826`.
-4. Enter the code from this repo, or use the `.db` / `.txt` file if one is
-   provided.
+4. Enter the code from this repo, or use the `.ncl` file.
 5. Apply, then play.
 
 The game must be running before runtime codes take effect.

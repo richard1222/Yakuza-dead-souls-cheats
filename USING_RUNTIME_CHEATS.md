@@ -4,33 +4,48 @@ Runtime codes patch the game's memory while it runs. They give you **Infinite
 Health** (god mode) and **Infinite Ammo**, plus items, money and ability points.
 They reset when you quit the game.
 
-There is a ready-to-use Artemis codelist in this folder:
+> ## Warning: this route is untested and the usual engine is unstable
+>
+> Two separate problems, and either one can stop you:
+>
+> 1. **The codes have never been loaded on a console.** They are authored by
+>    **jgduff1** and taken from Aldo's database, where the entry carries **no
+>    serial label**. That the set is the US one is an inference, not a fact
+>    established on hardware. See the warning at the bottom.
+> 2. **Artemis has crashed the console** on the hardware used for this repo.
+>
+> For problem 1: the **savepatch** route is the better bet — it needs no cheat
+> engine, and its addresses are at least region-confirmed by construction. See
+> [`VERIFY_SAVEPATCH.md`](VERIFY_SAVEPATCH.md).
+>
+> For problem 2: use a different engine that reads `.ncl` codelists if you have
+> one. If you use Artemis anyway, the failure may be the engine, not the code —
+> do not record it as "the code is wrong" without checking.
+
+The codelist is well-formed and named for your serial and app version:
 
 ```
 codelists\Yakuza Dead Souls BLUS30826 01.00.ncl
 ```
 
-It is named for your serial and app version, so Artemis picks it up by itself.
-
-> **These codes are NOT verified on hardware yet.** They are the set authored by
-> **jgduff1**, taken from Aldo's database. See the warning at the bottom — read
-> it before you rely on any of them.
+> **These codes are NOT verified on hardware yet.** See the warning above and
+> the one at the bottom — read both before you rely on any of them.
 
 ## What you need
 
-- The game running on your CFW console (4.93 Evilnat).
-- **Artemis** (or another PS3 cheat engine that loads `.ncl` codelists).
+- The game running on your CFW console.
+- A PS3 cheat engine that loads `.ncl` codelists. **Artemis is unstable here —
+  see the warning above.**
 - This `.ncl` file copied to the console.
 
 ## Install
 
-1. Copy the `.ncl` file onto your console (USB drive, or FTP). A common place
-   for Artemis codelists is on the internal drive next to Artemis itself — put it
-   wherever your Artemis build reads `.ncl` files from, or browse to it manually.
+1. Copy the `.ncl` file onto your console (USB drive, or FTP). Put it wherever
+   your cheat engine reads `.ncl` files from, or browse to it manually.
 
 2. Start the game and get **in-game** (in a save you don't mind testing on).
 
-3. Open Artemis and load the codelist. Because the filename contains
+3. Open your cheat engine and load the codelist. Because the filename contains
    `BLUS30826 01.00`, it matches your disc (`TITLE_ID = BLUS30826`,
    `APP_VER = 01.00`, both read from your disc).
 
