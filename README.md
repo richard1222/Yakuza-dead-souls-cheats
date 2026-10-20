@@ -45,6 +45,10 @@ Full survey of every source found, with what each one covers:
 The verification procedure, and what each savepatch code actually writes:
 [`VERIFY_SAVEPATCH.md`](VERIFY_SAVEPATCH.md).
 
+**Ready to use — god mode, infinite ammo, and more (runtime codes):**
+[`USING_RUNTIME_CHEATS.md`](USING_RUNTIME_CHEATS.md) and
+`codelists\Yakuza Dead Souls BLUS30826 01.00.ncl`.
+
 What was read off the disc, and how to reproduce it:
 [`DISC.md`](DISC.md).
 
